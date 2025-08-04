@@ -230,7 +230,7 @@ const CreateMeeting = () => {
       // console.log('Selected time:', selectedTime); // Debug log
 
       // Use a fallback URL if environment variable is not defined
-      const baseUrl = 'http://localhost:4001/';
+      const baseUrl = 'https://crm.pizeonfly.com/';
       // console.log('Using base URL:', baseUrl); // Debug log
       
       let response;
