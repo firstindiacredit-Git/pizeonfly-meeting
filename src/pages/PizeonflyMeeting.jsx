@@ -5,16 +5,16 @@ import "react-toastify/dist/ReactToastify.css";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Form, 
-  Input, 
-  Select, 
-  Checkbox, 
-  Button, 
-  Card, 
-  Row, 
-  Col, 
-  Typography, 
+import {
+  Form,
+  Input,
+  Select,
+  Checkbox,
+  Button,
+  Card,
+  Row,
+  Col,
+  Typography,
   Divider,
   TimePicker,
   Space,
@@ -23,11 +23,11 @@ import {
   Steps,
   Progress
 } from 'antd';
-import { 
-  CalendarOutlined, 
-  ClockCircleOutlined, 
-  UserOutlined, 
-  MailOutlined, 
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+  MailOutlined,
   PhoneOutlined,
   DollarOutlined,
   FileTextOutlined,
@@ -128,17 +128,11 @@ const CreateMeeting = () => {
   };
 
   const handleFormChange = (changedValues, allValues) => {
-    // console.log('Form changed:', changedValues, allValues); // Debug log
-    // console.log('Current meetingData:', meetingData); // Debug log
-    
-    // Update meetingData with all form values
     setMeetingData(prev => {
       const updated = { ...prev, ...allValues };
-      // console.log('Updated meetingData:', updated); // Debug log
       return updated;
     });
-    
-    // Also update the form fields to ensure consistency
+
     Object.keys(changedValues).forEach(key => {
       if (changedValues[key] !== undefined) {
         form.setFieldsValue({ [key]: changedValues[key] });
@@ -152,9 +146,7 @@ const CreateMeeting = () => {
   };
 
   const syncFormData = () => {
-    // Get all current form values and sync with meetingData
     const formValues = form.getFieldsValue();
-    // console.log('Current form values:', formValues);
     setMeetingData(prev => ({ ...prev, ...formValues }));
   };
 
@@ -165,16 +157,12 @@ const CreateMeeting = () => {
         return;
       }
     } else if (currentStep === 1) {
-      // Sync form data first
       syncFormData();
-      
-      // Validate required fields before proceeding to confirmation step
+
       const requiredFields = ['title', 'guestName', 'guestEmail', 'guestPhone', 'currentRevenue', 'revenueGoal', 'businessStruggle'];
       const missingFields = requiredFields.filter(field => !meetingData[field]);
-      
+
       if (missingFields.length > 0) {
-        // console.log('Missing fields:', missingFields);
-        // console.log('Current meetingData:', meetingData);
         toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
         return;
       }
@@ -187,21 +175,17 @@ const CreateMeeting = () => {
   };
 
   const handleSubmit = async (values) => {
-    // Get all form values
     const formData = { ...meetingData, ...values };
-    
+
     if (!formData.agreedToTerms) {
       toast.error("Please agree to the terms and conditions");
       return;
     }
 
-    // Validate required fields
     const requiredFields = ['title', 'guestName', 'guestEmail', 'guestPhone', 'currentRevenue', 'revenueGoal', 'businessStruggle'];
     const missingFields = requiredFields.filter(field => !formData[field]);
-    
+
     if (missingFields.length > 0) {
-      // console.log('Missing fields:', missingFields);
-      // console.log('Form data:', formData);
       toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
       return;
     }
@@ -223,16 +207,8 @@ const CreateMeeting = () => {
         agreedToTerms: formData.agreedToTerms || false
       };
 
-      // console.log('Submitting meeting data:', finalData); // Debug log
-      // console.log('Form data:', formData); // Debug log
-      // console.log('Meeting data state:', meetingData); // Debug log
-      // console.log('Selected date:', selectedDate); // Debug log
-      // console.log('Selected time:', selectedTime); // Debug log
-
-      // Use a fallback URL if environment variable is not defined
       const baseUrl = 'https://crm.pizeonfly.com/';
-      // console.log('Using base URL:', baseUrl); // Debug log
-      
+
       let response;
       if (isRescheduling) {
         response = await axios.put(
@@ -248,18 +224,17 @@ const CreateMeeting = () => {
 
       if (response.data.success) {
         toast.success(isRescheduling ? "Meeting rescheduled successfully!" : "Meeting created successfully!");
-        // Navigate to thank you page with meeting data
-        navigate('/thank-you', { 
-          state: { 
+        navigate('/thank-you', {
+          state: {
             meetingData: {
               ...finalData,
               _id: response.data.meeting?._id || 'N/A'
             }
-          } 
+          }
         });
       }
     } catch (error) {
-      console.error('API Error:', error); // Debug log
+      console.error('API Error:', error);
       toast.error(error.response?.data?.error || "An error occurred");
     } finally {
       setIsLoading(false);
@@ -270,18 +245,18 @@ const CreateMeeting = () => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <Title level={2} className="text-blue-600">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-center mb-4 sm:mb-8">
+              <Title level={2} className="text-blue-600 text-xl sm:text-2xl">
                 <CalendarOutlined className="mr-2" />
                 Select Date & Time
               </Title>
-              <Text className="text-gray-600">
+              <Text className="text-gray-600 text-sm sm:text-base">
                 Choose your preferred date and time for the consultation call
               </Text>
             </div>
 
-            <Row gutter={[24, 24]} className="items-start">
+            <Row gutter={[16, 16]} className="items-start">
               <Col xs={24} lg={14}>
                 <Card className="shadow-lg border-0">
                   <div className="custom-calendar">
@@ -299,7 +274,7 @@ const CreateMeeting = () => {
                 <Card className="shadow-lg border-0">
                   <div className="space-y-4">
                     <div>
-                      <Text strong className="text-lg">Time Zone</Text>
+                      <Text strong className="text-base sm:text-lg">Time Zone</Text>
                       <Select
                         defaultValue="Asia/Kolkata"
                         className="w-full mt-2"
@@ -318,8 +293,8 @@ const CreateMeeting = () => {
                     </div>
 
                     {selectedDate && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <Text strong className="text-blue-600">
+                      <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+                        <Text strong className="text-blue-600 text-sm sm:text-base">
                           {selectedDate.toLocaleDateString('en-US', {
                             weekday: 'long',
                             month: 'long',
@@ -330,13 +305,13 @@ const CreateMeeting = () => {
                     )}
 
                     <div>
-                      <Text strong className="text-lg">Select Time</Text>
-                      <div className="grid grid-cols-2 gap-2 mt-2 max-h-64 overflow-y-auto">
+                      <Text strong className="text-base sm:text-lg">Select Time</Text>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 max-h-48 sm:max-h-64 overflow-y-auto">
                         {timeSlots.map((time) => (
                           <Button
                             key={time}
                             type={selectedTime === time ? "primary" : "default"}
-                            className={`h-12 ${selectedTime === time ? 'bg-blue-500' : 'hover:bg-blue-50'}`}
+                            className={`h-10 sm:h-12 text-sm sm:text-base ${selectedTime === time ? 'bg-blue-500' : 'hover:bg-blue-50'}`}
                             onClick={() => handleTimeSelect(time)}
                           >
                             <ClockCircleOutlined className="mr-1" />
@@ -354,17 +329,188 @@ const CreateMeeting = () => {
 
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <Title level={2} className="text-green-600">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-center mb-4 sm:mb-8">
+              <Title level={2} className="text-green-600 text-xl sm:text-2xl">
                 <UserOutlined className="mr-2" />
                 Enter Your Details
               </Title>
-              <Text className="text-gray-600">
+              <Text className="text-gray-600 text-sm sm:text-base">
                 Please provide your information and business details
               </Text>
             </div>
+            <div className="md:ml-24">
+              <Form
+                form={form}
+                layout="vertical"
+                onValuesChange={handleFormChange}
+                initialValues={{
+                  title: meetingData.title,
+                  duration: meetingData.duration,
+                  guestName: meetingData.guestName,
+                  guestEmail: meetingData.guestEmail,
+                  guestPhone: meetingData.guestPhone,
+                  currentRevenue: meetingData.currentRevenue,
+                  revenueGoal: meetingData.revenueGoal,
+                  businessStruggle: meetingData.businessStruggle,
+                  description: meetingData.description,
+                  confirmAttendance: meetingData.confirmAttendance || false,
+                  agreedToTerms: meetingData.agreedToTerms || false
+                }}
+                onFinish={handleSubmit}
+                className="max-w-4xl mx-auto"
+              >
+                <Row gutter={[16, 0]}>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="title"
+                      label={<Text strong>Meeting Title</Text>}
+                      rules={[{ required: true, message: 'Please enter meeting title' }]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="e.g., Consultation Call"
+                        prefix={<FileTextOutlined />}
+                      />
+                    </Form.Item>
+                  </Col>
 
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="duration"
+                      label={<Text strong>Duration</Text>}
+                      rules={[{ required: true, message: 'Please select duration' }]}
+                    >
+                      <Select size="large" placeholder="Select duration">
+                        <Option value={15}>15 minutes</Option>
+                        <Option value={30}>30 minutes</Option>
+                        <Option value={45}>45 minutes</Option>
+                        <Option value={60}>60 minutes</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Form.Item
+                  name="guestName"
+                  label={<Text strong>Full Name</Text>}
+                  rules={[{ required: true, message: 'Please enter your name' }]}
+                >
+                  <Input
+                    size="large"
+                    placeholder="e.g., John Doe"
+                    prefix={<UserOutlined />}
+                  />
+                </Form.Item>
+
+                <Row gutter={[16, 0]}>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="guestEmail"
+                      label={<Text strong>Email Address</Text>}
+                      rules={[
+                        { required: true, message: 'Please enter your email' },
+                        { type: 'email', message: 'Please enter a valid email' }
+                      ]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="e.g., john.doe@example.com"
+                        prefix={<MailOutlined />}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="guestPhone"
+                      label={<Text strong>Phone Number</Text>}
+                      rules={[{ required: true, message: 'Please enter your phone number' }]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="e.g., 9999999999"
+                        prefix={<PhoneOutlined />}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 0]}>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="currentRevenue"
+                      label={<Text strong><DollarOutlined className="mr-1" />Current Monthly Revenue</Text>}
+                      rules={[{ required: true, message: 'Please enter current revenue' }]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="e.g., $5000-$7000"
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="revenueGoal"
+                      label={<Text strong><DollarOutlined className="mr-1" />Revenue Goal</Text>}
+                      rules={[{ required: true, message: 'Please enter revenue goal' }]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="e.g., $10000 in 3 months"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Form.Item
+                  name="businessStruggle"
+                  label={<Text strong>Business Challenges</Text>}
+                  rules={[{ required: true, message: 'Please describe your business challenges' }]}
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder="Describe your current business challenges and what you hope to achieve from this consultation..."
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="description"
+                  label={<Text strong>Additional Notes (Optional)</Text>}
+                >
+                  <TextArea
+                    rows={3}
+                    placeholder="Any additional information you'd like to share..."
+                  />
+                </Form.Item>
+
+                <Alert
+                  message="Important Information"
+                  description="Please ensure all details are accurate. You will receive a confirmation email once the meeting is scheduled."
+                  type="info"
+                  showIcon
+                  className="mb-6"
+                />
+              </Form>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-center mb-4 sm:mb-8">
+              <Title level={2} className="text-purple-600 text-xl sm:text-2xl">
+                <CheckCircleOutlined className="mr-2" />
+                Confirm Your Booking
+              </Title>
+              <Text className="text-gray-600 text-sm sm:text-base">
+                Please review your details and confirm the meeting
+              </Text>
+            </div>
+
+            <div className="md:ml-24">
             <Form
               form={form}
               layout="vertical"
@@ -385,262 +531,94 @@ const CreateMeeting = () => {
               onFinish={handleSubmit}
               className="max-w-4xl mx-auto"
             >
-              <Row gutter={[24, 0]}>
-                <Col xs={24} md={12}>
+              <Card className="shadow-lg border-0">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+                        <Text strong className="text-blue-600 text-sm sm:text-base">Meeting Details</Text>
+                        <div className="mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
+                          <div><Text strong>Title:</Text> {meetingData.title}</div>
+                          <div><Text strong>Date:</Text> {selectedDate?.toLocaleDateString()}</div>
+                          <div><Text strong>Time:</Text> {selectedTime}</div>
+                          <div><Text strong>Duration:</Text> {meetingData.duration} minutes</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
+                        <Text strong className="text-green-600 text-sm sm:text-base">Personal Information</Text>
+                        <div className="mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
+                          <div><Text strong>Name:</Text> {meetingData.guestName}</div>
+                          <div><Text strong>Email:</Text> {meetingData.guestEmail}</div>
+                          <div><Text strong>Phone:</Text> {meetingData.guestPhone}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="bg-orange-50 p-3 sm:p-4 rounded-lg">
+                        <Text strong className="text-orange-600 text-sm sm:text-base">Business Information</Text>
+                        <div className="mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
+                          <div><Text strong>Current Revenue:</Text> {meetingData.currentRevenue}</div>
+                          <div><Text strong>Revenue Goal:</Text> {meetingData.revenueGoal}</div>
+                        </div>
+                      </div>
+
+                      {meetingData.description && (
+                        <div className="bg-purple-50 p-3 sm:p-4 rounded-lg">
+                          <Text strong className="text-purple-600 text-sm sm:text-base">Additional Notes</Text>
+                          <div className="mt-2 text-sm sm:text-base">
+                            <Text>{meetingData.description}</Text>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <Divider />
+
                   <Form.Item
-                    name="title"
-                    label={<Text strong>Meeting Title</Text>}
-                    rules={[{ required: true, message: 'Please enter meeting title' }]}
+                    name="confirmAttendance"
+                    valuePropName="checked"
+                    rules={[{ required: true, message: 'Please confirm your attendance' }]}
                   >
-                    <Input 
-                      size="large" 
-                      placeholder="e.g., Consultation Call"
-                      prefix={<FileTextOutlined />}
-                    />
+                    <Checkbox
+                      checked={meetingData.confirmAttendance || false}
+                      onChange={(e) => {
+                        setMeetingData(prev => ({ ...prev, confirmAttendance: e.target.checked }));
+                      }}
+                    >
+                      <Text className="text-sm sm:text-base">I confirm and agree to attend the call once I book</Text>
+                    </Checkbox>
                   </Form.Item>
-                </Col>
 
-                <Col xs={24} md={12}>
                   <Form.Item
-                    name="duration"
-                    label={<Text strong>Duration</Text>}
-                    rules={[{ required: true, message: 'Please select duration' }]}
+                    name="agreedToTerms"
+                    valuePropName="checked"
+                    rules={[{ required: true, message: 'Please agree to the terms' }]}
                   >
-                    <Select size="large" placeholder="Select duration">
-                      <Option value={15}>15 minutes</Option>
-                      <Option value={30}>30 minutes</Option>
-                      <Option value={45}>45 minutes</Option>
-                      <Option value={60}>60 minutes</Option>
-                    </Select>
+                    <Checkbox
+                      checked={meetingData.agreedToTerms || false}
+                      onChange={(e) => {
+                        setMeetingData(prev => ({ ...prev, agreedToTerms: e.target.checked }));
+                      }}
+                    >
+                      <Text className="text-sm sm:text-base">I agree to the Terms of Use and Privacy Notice</Text>
+                    </Checkbox>
                   </Form.Item>
-                </Col>
-              </Row>
 
-              <Form.Item
-                name="guestName"
-                label={<Text strong>Full Name</Text>}
-                rules={[{ required: true, message: 'Please enter your name' }]}
-              >
-                <Input 
-                  size="large" 
-                  placeholder="e.g., John Doe"
-                  prefix={<UserOutlined />}
-                />
-              </Form.Item>
-
-              <Row gutter={[24, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="guestEmail"
-                    label={<Text strong>Email Address</Text>}
-                    rules={[
-                      { required: true, message: 'Please enter your email' },
-                      { type: 'email', message: 'Please enter a valid email' }
-                    ]}
-                  >
-                    <Input 
-                      size="large" 
-                      placeholder="e.g., john.doe@example.com"
-                      prefix={<MailOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="guestPhone"
-                    label={<Text strong>Phone Number</Text>}
-                    rules={[{ required: true, message: 'Please enter your phone number' }]}
-                  >
-                    <Input 
-                      size="large" 
-                      placeholder="e.g., 9999999999"
-                      prefix={<PhoneOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={[24, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="currentRevenue"
-                    label={<Text strong><DollarOutlined className="mr-1" />Current Monthly Revenue</Text>}
-                    rules={[{ required: true, message: 'Please enter current revenue' }]}
-                  >
-                    <Input 
-                      size="large" 
-                      placeholder="e.g., $5000-$7000"
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="revenueGoal"
-                    label={<Text strong><DollarOutlined className="mr-1" />Revenue Goal</Text>}
-                    rules={[{ required: true, message: 'Please enter revenue goal' }]}
-                  >
-                    <Input 
-                      size="large" 
-                      placeholder="e.g., $10000 in 3 months"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Form.Item
-                name="businessStruggle"
-                label={<Text strong>Business Challenges</Text>}
-                rules={[{ required: true, message: 'Please describe your business challenges' }]}
-              >
-                <TextArea 
-                  rows={4}
-                  placeholder="Describe your current business challenges and what you hope to achieve from this consultation..."
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="description"
-                label={<Text strong>Additional Notes (Optional)</Text>}
-              >
-                <TextArea 
-                  rows={3}
-                  placeholder="Any additional information you'd like to share..."
-                />
-              </Form.Item>
-
-              <Alert
-                message="Important Information"
-                description="Please ensure all details are accurate. You will receive a confirmation email once the meeting is scheduled."
-                type="info"
-                showIcon
-                className="mb-6"
-              />
+                  <Alert
+                    message="What to Expect"
+                    description="During this consultation, we'll discuss your business challenges, review your goals, and provide personalized recommendations to help you achieve your objectives."
+                    type="success"
+                    showIcon
+                  />
+                </div>
+              </Card>
             </Form>
+            </div>
           </div>
         );
-
-             case 2:
-         return (
-           <div className="space-y-6">
-             <div className="text-center mb-8">
-               <Title level={2} className="text-purple-600">
-                 <CheckCircleOutlined className="mr-2" />
-                 Confirm Your Booking
-               </Title>
-               <Text className="text-gray-600">
-                 Please review your details and confirm the meeting
-               </Text>
-             </div>
-
-             <Form
-               form={form}
-               layout="vertical"
-               onValuesChange={handleFormChange}
-               initialValues={{
-                 title: meetingData.title,
-                 duration: meetingData.duration,
-                 guestName: meetingData.guestName,
-                 guestEmail: meetingData.guestEmail,
-                 guestPhone: meetingData.guestPhone,
-                 currentRevenue: meetingData.currentRevenue,
-                 revenueGoal: meetingData.revenueGoal,
-                 businessStruggle: meetingData.businessStruggle,
-                 description: meetingData.description,
-                 confirmAttendance: meetingData.confirmAttendance || false,
-                 agreedToTerms: meetingData.agreedToTerms || false
-               }}
-               onFinish={handleSubmit}
-               className="max-w-4xl mx-auto"
-             >
-               <Card className="shadow-lg border-0">
-                 <div className="space-y-6">
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="space-y-4">
-                       <div className="bg-blue-50 p-4 rounded-lg">
-                         <Text strong className="text-blue-600">Meeting Details</Text>
-                         <div className="mt-2 space-y-2">
-                           <div><Text strong>Title:</Text> {meetingData.title}</div>
-                           <div><Text strong>Date:</Text> {selectedDate?.toLocaleDateString()}</div>
-                           <div><Text strong>Time:</Text> {selectedTime}</div>
-                           <div><Text strong>Duration:</Text> {meetingData.duration} minutes</div>
-                         </div>
-                       </div>
-
-                       <div className="bg-green-50 p-4 rounded-lg">
-                         <Text strong className="text-green-600">Personal Information</Text>
-                         <div className="mt-2 space-y-2">
-                           <div><Text strong>Name:</Text> {meetingData.guestName}</div>
-                           <div><Text strong>Email:</Text> {meetingData.guestEmail}</div>
-                           <div><Text strong>Phone:</Text> {meetingData.guestPhone}</div>
-                         </div>
-                       </div>
-                     </div>
-
-                     <div className="space-y-4">
-                       <div className="bg-orange-50 p-4 rounded-lg">
-                         <Text strong className="text-orange-600">Business Information</Text>
-                         <div className="mt-2 space-y-2">
-                           <div><Text strong>Current Revenue:</Text> {meetingData.currentRevenue}</div>
-                           <div><Text strong>Revenue Goal:</Text> {meetingData.revenueGoal}</div>
-                         </div>
-                       </div>
-
-                       {meetingData.description && (
-                         <div className="bg-purple-50 p-4 rounded-lg">
-                           <Text strong className="text-purple-600">Additional Notes</Text>
-                           <div className="mt-2">
-                             <Text>{meetingData.description}</Text>
-                           </div>
-                         </div>
-                       )}
-                     </div>
-                   </div>
-
-                   <Divider />
-
-                   <Form.Item
-                     name="confirmAttendance"
-                     valuePropName="checked"
-                     rules={[{ required: true, message: 'Please confirm your attendance' }]}
-                   >
-                     <Checkbox 
-                       checked={meetingData.confirmAttendance || false}
-                       onChange={(e) => {
-                         setMeetingData(prev => ({ ...prev, confirmAttendance: e.target.checked }));
-                       }}
-                     >
-                       <Text>I confirm and agree to attend the call once I book</Text>
-                     </Checkbox>
-                   </Form.Item>
-
-                   <Form.Item
-                     name="agreedToTerms"
-                     valuePropName="checked"
-                     rules={[{ required: true, message: 'Please agree to the terms' }]}
-                   >
-                     <Checkbox 
-                       checked={meetingData.agreedToTerms || false}
-                       onChange={(e) => {
-                         setMeetingData(prev => ({ ...prev, agreedToTerms: e.target.checked }));
-                       }}
-                     >
-                       <Text>I agree to the Terms of Use and Privacy Notice</Text>
-                     </Checkbox>
-                   </Form.Item>
-
-                   <Alert
-                     message="What to Expect"
-                     description="During this consultation, we'll discuss your business challenges, review your goals, and provide personalized recommendations to help you achieve your objectives."
-                     type="success"
-                     showIcon
-                   />
-                 </div>
-               </Card>
-             </Form>
-           </div>
-         );
 
       default:
         return null;
@@ -649,22 +627,22 @@ const CreateMeeting = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <Title level={1} className="text-gray-800 mb-2">
+          <div className="text-center mb-4 sm:mb-8">
+            <Title level={1} className="text-gray-800 mb-2 text-2xl sm:text-3xl lg:text-4xl">
               Schedule Your Consultation
             </Title>
-            <Text className="text-gray-600 text-lg">
+            <Text className="text-gray-600 text-base sm:text-lg">
               Book a free consultation call with our business experts
             </Text>
           </div>
 
           {/* Progress Bar */}
-          <div className="mb-8">
-            <Progress 
-              percent={((currentStep + 1) / steps.length) * 100} 
+          <div className="mb-4 sm:mb-8">
+            <Progress
+              percent={((currentStep + 1) / steps.length) * 100}
               strokeColor={{
                 '0%': '#108ee9',
                 '100%': '#87d068',
@@ -674,7 +652,7 @@ const CreateMeeting = () => {
           </div>
 
           {/* Steps */}
-          <div className="mb-8">
+          <div className="mb-4 sm:mb-8">
             <Steps current={currentStep} className="hidden md:block">
               {steps.map((step, index) => (
                 <Steps.Step
@@ -685,6 +663,31 @@ const CreateMeeting = () => {
                 />
               ))}
             </Steps>
+
+            {/* Mobile Steps Indicator */}
+            {/* <div className="md:hidden flex justify-center mb-4">
+              <div className="flex items-center space-x-2">
+                {steps.map((step, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${index <= currentStep
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                      }`}>
+                      {index + 1}
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div className={`w-8 h-1 mx-2 ${index < currentStep ? 'bg-blue-500' : 'bg-gray-200'
+                        }`}></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-2">
+                <Text className="text-sm text-gray-600">
+                  Step {currentStep + 1} of {steps.length}: {steps[currentStep].title}
+                </Text>
+              </div>
+            </div> */}
           </div>
 
           {/* Content */}
@@ -693,13 +696,13 @@ const CreateMeeting = () => {
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8">
+          <div className="flex flex-col sm:flex-row justify-between mt-4 sm:mt-8 gap-4">
             <Button
               size="large"
               icon={<ArrowLeftOutlined />}
               onClick={handlePrev}
               disabled={currentStep === 0}
-              className="flex items-center"
+              className="flex items-center justify-center w-full sm:w-auto"
             >
               Previous
             </Button>
@@ -710,7 +713,7 @@ const CreateMeeting = () => {
                 size="large"
                 icon={<ArrowRightOutlined />}
                 onClick={handleNext}
-                className="flex items-center"
+                className="flex items-center justify-center w-full sm:w-auto"
               >
                 Next
               </Button>
@@ -720,22 +723,17 @@ const CreateMeeting = () => {
                 size="large"
                 icon={<CheckCircleOutlined />}
                 onClick={() => {
-                  // Sync form data first
                   syncFormData();
-                  
-                  // Get all form values and submit
+
                   form.validateFields().then(values => {
-                    // console.log('Form values before submit:', values);
-                    // console.log('Meeting data state:', meetingData);
                     const combinedData = { ...meetingData, ...values };
-                    // console.log('Combined data:', combinedData);
                     handleSubmit(combinedData);
                   }).catch(error => {
-                    // console.log('Form validation failed:', error);
+                    console.log('Form validation failed:', error);
                   });
                 }}
                 loading={isLoading}
-                className="flex items-center"
+                className="flex items-center justify-center w-full sm:w-auto"
               >
                 {isLoading ? 'Scheduling...' : 'Schedule Meeting'}
               </Button>
@@ -745,7 +743,7 @@ const CreateMeeting = () => {
       </div>
 
       <ToastContainer />
-      
+
       <style jsx>{`
         .custom-calendar {
           .react-calendar {
@@ -830,6 +828,50 @@ const CreateMeeting = () => {
           .react-calendar__tile:hover {
             background-color: #f0f8ff !important;
             border-radius: 50%;
+          }
+
+          /* Mobile Responsive Calendar */
+          @media (max-width: 768px) {
+            .react-calendar__navigation {
+              height: 50px;
+              margin-bottom: 15px;
+            }
+
+            .react-calendar__navigation button {
+              min-width: 40px;
+              font-size: 16px;
+              padding: 10px;
+            }
+
+            .react-calendar__month-view__weekdays {
+              font-size: 12px;
+              padding: 8px 0;
+            }
+
+            .react-calendar__tile {
+              height: 40px;
+              width: 40px;
+              font-size: 12px;
+            }
+
+            .react-calendar__month-view__days {
+              gap: 4px;
+              padding: 8px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .react-calendar__tile {
+              height: 35px;
+              width: 35px;
+              font-size: 11px;
+            }
+
+            .react-calendar__navigation button {
+              min-width: 35px;
+              font-size: 14px;
+              padding: 8px;
+            }
           }
         }
       `}</style>
